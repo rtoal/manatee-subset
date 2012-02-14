@@ -1,5 +1,10 @@
 package edu.lmu.cs.xlg.manatee.entities;
 
+import edu.lmu.cs.xlg.util.Log;
+
+/**
+ * An assignment statement.
+ */
 public class AssignmentStatement extends Statement {
 
     private Expression target;
@@ -16,5 +21,14 @@ public class AssignmentStatement extends Statement {
 
     public Expression getSource() {
         return source;
+    }
+
+    @Override
+    public void analyze(Log log, SymbolTable table, Subroutine owner, boolean inLoop) {
+        target.analyze(log, table, owner, inLoop);
+        source.analyze(log, table, owner, inLoop);
+        if (!target.isWritableLValue()) {
+            log.error("non.writable.in.read.statement");
+        }
     }
 }

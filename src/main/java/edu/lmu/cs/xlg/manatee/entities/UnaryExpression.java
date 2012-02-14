@@ -1,5 +1,10 @@
 package edu.lmu.cs.xlg.manatee.entities;
 
+import edu.lmu.cs.xlg.util.Log;
+
+/**
+ * An expression made up of an operator and a single operand.
+ */
 public class UnaryExpression extends Expression {
 
     private String op;
@@ -25,5 +30,27 @@ public class UnaryExpression extends Expression {
      */
     public Expression getOperand() {
         return operand;
+    }
+
+    @Override
+    public void analyze(Log log, SymbolTable table, Subroutine owner, boolean inLoop) {
+        operand.analyze(log, table, owner, inLoop);
+
+        if ("not".equals(op)) {
+            operand.assertBoolean(op, log);
+            type = Type.TRUTH_VALUE;
+
+        } else if ("-".equals(op)) {
+            operand.assertInteger(op, log);
+            type = Type.WHOLE_NUMBER;
+
+        } else if ("length".equals(op)) {
+            operand.assertArrayOrString(op, log);
+            type = Type.WHOLE_NUMBER;
+
+        } else {
+            log.error("compiler.bug");
+            type = Type.ARBITRARY;
+        }
     }
 }

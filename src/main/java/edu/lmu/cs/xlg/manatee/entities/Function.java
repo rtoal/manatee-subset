@@ -2,31 +2,32 @@ package edu.lmu.cs.xlg.manatee.entities;
 
 import java.util.List;
 
-public class Function extends Declaration {
+import edu.lmu.cs.xlg.util.Log;
+
+/**
+ * A subroutine called from an expression.  It therefore has a return type.
+ */
+public class Function extends Subroutine {
 
     private String returnTypeName;
-    private List<Variable> parameters;
-    private Block body;
+    private Type returnType;
 
-    /**
-     * Creates a function object.
-     */
     public Function(String returnTypeName, String name, List<Variable> parameters, Block body) {
-        super(name);
+        super(name, parameters, body);
         this.returnTypeName = returnTypeName;
-        this.parameters = parameters;
-        this.body = body;
     }
 
     public String getReturnTypeName() {
         return returnTypeName;
     }
 
-    public List<Variable> getParameters() {
-        return parameters;
+    public Type getReturnType() {
+        return returnType;
     }
 
-    public Block getBody() {
-        return body;
+    @Override
+    public void analyzeSignature(Log log, SymbolTable table, Subroutine owner, boolean inLoop) {
+        returnType = table.lookupType(returnTypeName, log);
+        super.analyzeSignature(log, table, owner, inLoop);
     }
 }

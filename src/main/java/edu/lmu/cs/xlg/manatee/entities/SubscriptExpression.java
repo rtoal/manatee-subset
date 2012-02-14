@@ -1,20 +1,39 @@
 package edu.lmu.cs.xlg.manatee.entities;
 
+import edu.lmu.cs.xlg.util.Log;
+
 public class SubscriptExpression extends Expression {
 
-    private Expression base;
-    private Expression subscript;
+    private Expression collection;
+    private Expression index;
 
-    public SubscriptExpression(Expression base, Expression subscript) {
-        this.base = base;
-        this.subscript = subscript;
+    public SubscriptExpression(Expression base, Expression index) {
+        this.collection = base;
+        this.index = index;
     }
 
     public Expression getBase() {
-        return base;
+        return collection;
     }
 
-    public Expression getSubscript() {
-        return subscript;
+    public Expression getIndex() {
+        return index;
+    }
+
+    @Override
+    boolean isWritableLValue() {
+        return collection.type instanceof ArrayType && collection.isWritableLValue();
+    }
+
+    @Override
+    public void analyze(Log log, SymbolTable table, Subroutine owner, boolean inLoop) {
+        collection.analyze(log, table, owner, inLoop);
+        index.analyze(log, table, owner, inLoop);
+
+        collection.assertArrayOrString("[]", log);
+        index.assertInteger("[]", log);
+        type = (collection.type == Type.STRING) ? Type.CHARACTER
+            : collection.type instanceof ArrayType ? ArrayType.class.cast(collection.type).getBaseType()
+            : Type.ARBITRARY;
     }
 }

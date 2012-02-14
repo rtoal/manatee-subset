@@ -434,7 +434,7 @@ Statement LOOP(): {
         {return e == null ? new PlainLoop(b) : new TimesLoop(e, b);}
     |
         "while" e = EXP() b = BLOCK() "end"
-        {return new WhileStatement(e, b);}
+        {return new WhileLoop(e, b);}
     |
         "for" "each" t = <ID> "in" e = EXP()
         (
@@ -598,7 +598,7 @@ Expression EXP11(): {
         {return e;}
     |
         t = <ID>
-        {return new VariableReference(t.image);}
+        {return new IdentifierExpression(t.image);}
     |
         "[" (expressions = EXPLIST())? "]"
         {return new ArrayConstructor(expressions);}

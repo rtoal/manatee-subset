@@ -1,7 +1,8 @@
 package edu.lmu.cs.xlg.manatee.entities;
 
 /**
- * A Manatee statement.
+ * A statement.
  */
 public abstract class Statement extends Entity {
+    // Intentionally empty
 }

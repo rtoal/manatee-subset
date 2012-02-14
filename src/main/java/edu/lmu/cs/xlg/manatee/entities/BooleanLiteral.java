@@ -1,5 +1,7 @@
 package edu.lmu.cs.xlg.manatee.entities;
 
+import edu.lmu.cs.xlg.util.Log;
+
 /**
  * A simple typsafe enum of the two boolean literals, yes and no.
  */
@@ -14,5 +16,10 @@ public class BooleanLiteral extends Literal {
      */
     private BooleanLiteral(String lexeme) {
         super(lexeme);
+    }
+
+    @Override
+    public void analyze(Log log, SymbolTable table, Subroutine owner, boolean inLoop) {
+        this.type = Type.TRUTH_VALUE;
     }
 }

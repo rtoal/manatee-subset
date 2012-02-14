@@ -1,5 +1,10 @@
 package edu.lmu.cs.xlg.manatee.entities;
 
+import edu.lmu.cs.xlg.util.Log;
+
+/**
+ * An unqualified loop statement.
+ */
 public class PlainLoop extends Statement {
 
     private Block body;
@@ -10,5 +15,10 @@ public class PlainLoop extends Statement {
 
     public Block getBody() {
         return body;
+    }
+
+    @Override
+    public void analyze(Log log, SymbolTable table, Subroutine owner, boolean inLoop) {
+        body.analyze(log, table, owner, true);
     }
 }

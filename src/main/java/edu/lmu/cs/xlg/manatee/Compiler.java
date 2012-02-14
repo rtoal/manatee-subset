@@ -7,6 +7,7 @@ import java.io.Reader;
 
 import edu.lmu.cs.xlg.manatee.entities.Entity;
 import edu.lmu.cs.xlg.manatee.entities.Script;
+import edu.lmu.cs.xlg.manatee.generators.Generator;
 import edu.lmu.cs.xlg.manatee.syntax.Parser;
 import edu.lmu.cs.xlg.util.Log;
 
@@ -15,7 +16,7 @@ import edu.lmu.cs.xlg.util.Log;
  *
  * <p>This class contains a static <code>main</code> method allowing you to run the compiler
  * from the command line, as well as a few methods to compile, or even run specific phases of
- * the compiler, Scriptmatically.</p>
+ * the compiler, programmatically.</p>
  */
 public class Compiler {
 
@@ -34,7 +35,7 @@ public class Compiler {
      * </pre>
      * where:
      * <pre>
-     *     -x   generates and prints the syntax tree only
+     *     -x   generates and prints the syntax tree only (the default)
      *     -m   generates and dumps the semantic graph only
      *     -js  translates to JavaScript
      * </pre>
@@ -64,17 +65,17 @@ public class Compiler {
 
         if ("-x".equals(option)) {
             Script script = compiler.checkSyntax(reader);
-            Entity.printSyntaxTree("", "", script, writer);
+            script.printSyntaxTree("", "", writer);
         } else if ("-m".equals(option)) {
             Script script = compiler.checkSemantics(reader);
-            Entity.dump(script, writer);
+            script.printEntities(writer);
         } else {
             compiler.translate(reader, writer);
         }
     }
 
     /**
-     * Checks the syntax of a Iki Script read from a given reader object.
+     * Checks the syntax of a Manatee Script read from a given reader object.
      *
      * @param reader
      *     the source
@@ -97,19 +98,19 @@ public class Compiler {
      * a parse.  This method is useful for testing or in cases where you want to embed an Manatee
      * compiler in a larger application.
      *
-     * @param Script
-     *     the Script object to analyze
+     * @param script
+     *     the script object to analyze
      * @return the (checked) semantic graph if successful, or null if there were any syntax or
      *     static semantic errors
      */
     public Script checkSemantics(Script script) {
         log.message("semantics.checking");
-        // TODO --> Script.analyze(new SymbolTable(), log);
+        // TODO --> script.analyze(new SymbolTable(), log);
         return script;
     }
 
     /**
-     * Checks the syntax and static semantics of a Iki Script from a reader.
+     * Checks the syntax and static semantics of a Manatee Script from a reader.
      *
      * @param reader
      *     the source
@@ -125,7 +126,7 @@ public class Compiler {
     }
 
     /**
-     * Reads a Manatee script from the given reader and outputs an equivalent Script to the
+     * Reads a Manatee script from the given reader and outputs a equivalent script to the
      * given writer.
      *
      * @param reader
@@ -137,7 +138,7 @@ public class Compiler {
         Script script = checkSemantics(reader);
         if (log.getErrorCount() == 0) {
             // TODO --> script.optimize();
-            // TODO ---> Generator.getGenerator().generate(Script, writer);
+            Generator.getGenerator("js").generate(script, writer);
         }
     }
 
@@ -151,7 +152,7 @@ public class Compiler {
     }
 
     /**
-     * Puts the compiler in an out of quiet mode.  In quiet mode, the compiler doe no logging
+     * Puts the compiler in and out of quiet mode.  In quiet mode, the compiler does no logging
      * at all.
      */
     public void setQuiet(boolean quiet) {
@@ -162,7 +163,7 @@ public class Compiler {
      * Writes the usage message to stderr and exits with status 1.
      */
     private static void abortWithUsageError() {
-        System.err.println("Usage: java Compiler [-x|-m|-c|-js|-86] filename");
+        System.err.println("Usage: java Compiler [-x|-m|-js] filename");
         System.err.println("");
         System.err.println("    -x    generates and prints the syntax tree only");
         System.err.println("    -m    generates and prints the semantic graph only");

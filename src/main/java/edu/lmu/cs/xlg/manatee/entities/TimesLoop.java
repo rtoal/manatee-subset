@@ -1,5 +1,10 @@
 package edu.lmu.cs.xlg.manatee.entities;
 
+import edu.lmu.cs.xlg.util.Log;
+
+/**
+ * A loop that executes at most a fixed number of times.
+ */
 public class TimesLoop extends Statement {
 
     private Expression count;
@@ -16,5 +21,12 @@ public class TimesLoop extends Statement {
 
     public Block getBody() {
         return body;
+    }
+
+    @Override
+    public void analyze(Log log, SymbolTable table, Subroutine owner, boolean inLoop) {
+        count.assertInteger("times loop", log);
+        count.analyze(log, table, owner, inLoop);
+        body.analyze(log, table, owner, true);
     }
 }

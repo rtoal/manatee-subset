@@ -1,5 +1,7 @@
 package edu.lmu.cs.xlg.manatee.entities;
 
+import edu.lmu.cs.xlg.util.Log;
+
 public class BinaryExpression extends Expression {
 
     private String op;
@@ -34,5 +36,51 @@ public class BinaryExpression extends Expression {
      */
     public Expression getRight() {
         return right;
+    }
+
+    @Override
+    public void analyze(Log log, SymbolTable table, Subroutine owner, boolean inLoop) {
+        left.analyze(log, table, owner, inLoop);
+        right.analyze(log, table, owner, inLoop);
+
+        // num op num (for arithmetic op)
+        if (op.matches("[-+*/]")) {
+            left.assertArithmetic(op, log);
+            right.assertArithmetic(op, log);
+            type = (left.type == Type.NUMBER || right.type == Type.NUMBER)
+                ? Type.NUMBER : Type.WHOLE_NUMBER;
+
+        // int op int returning int (for shifts and mod)
+        } else if (op.matches("<<|>>")) {
+            left.assertInteger(op, log);
+            right.assertInteger(op, log);
+            type = Type.WHOLE_NUMBER;
+
+        // char/num/str op char/num/str (for greater/less inequalities)
+        } else if (op.matches("<|<=|>|>=")) {
+            if (left.type == Type.CHARACTER) {
+                right.assertChar(op, log);
+            } else if (left.type == Type.STRING) {
+                right.assertString(op, log);
+            } else if (left.type.isArithmetic()){
+                left.assertArithmetic(op, log);
+                right.assertArithmetic(op, log);
+            }
+            type = Type.TRUTH_VALUE;
+
+        // equals or not equals on primitives
+        } else if (op.matches("=|≠")) {
+            if (!(left.type.isPrimitive() && (left.isCompatibleWith(right.type) || right.isCompatibleWith(left.type)))) {
+                log.error("eq.type.error", op, left.type.getName(), right.type.getName());
+            }
+            type = Type.TRUTH_VALUE;
+
+        // bool ANALSO bool
+        // bool ORELSE bool
+        } else if (op.matches("and|or")) {
+            left.assertBoolean(op, log);
+            right.assertBoolean(op, log);
+            type = Type.TRUTH_VALUE;
+        }
     }
 }
