@@ -80,7 +80,8 @@ TOKEN: {
             "\\" ["n", "t", "\"", "\'", "\\"]
         )*
         "\""
-    >|
+    >
+|
     < ID: <LETTER> (<LETTER>|<DIGIT>|"_")* >
 |
     < #LETTER: [
@@ -644,7 +645,7 @@ List<Expression> EXPLIST(): {
     List<Expression> expressions = new ArrayList<Expression>();
     Expression e;
 }{
-    e = EXP()
+    e = EXP() {expressions.add(e);}
     ("," e = EXP() {expressions.add(e);})*
     {return expressions;}
 }

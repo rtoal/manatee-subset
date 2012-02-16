@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
 
-import edu.lmu.cs.xlg.manatee.entities.Entity;
 import edu.lmu.cs.xlg.manatee.entities.Script;
+import edu.lmu.cs.xlg.manatee.entities.SymbolTable;
 import edu.lmu.cs.xlg.manatee.generators.Generator;
 import edu.lmu.cs.xlg.manatee.syntax.Parser;
 import edu.lmu.cs.xlg.util.Log;
@@ -105,7 +105,7 @@ public class Compiler {
      */
     public Script checkSemantics(Script script) {
         log.message("semantics.checking");
-        // TODO --> script.analyze(new SymbolTable(), log);
+        script.analyze(log, new SymbolTable(null), null, false);
         return script;
     }
 

@@ -46,10 +46,14 @@ public class RangeLoop extends Statement {
     public void analyze(Log log, SymbolTable table, Subroutine owner, boolean inLoop) {
         low.analyze(log, table, owner, inLoop);
         high.analyze(log, table, owner, inLoop);
-        step.analyze(log, table, owner, inLoop);
+        if (step != null) {
+            step.analyze(log, table, owner, inLoop);
+        }
         low.assertInteger("range loop", log);
         high.assertInteger("range loop", log);
-        step.assertInteger("range loop", log);
+        if (step != null) {
+            step.assertInteger("range loop", log);
+        }
         body.createTable(table);
         body.getTable().insert(new Variable(iteratorName, Type.WHOLE_NUMBER), log);
         body.analyze(log, table, owner, true);

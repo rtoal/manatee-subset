@@ -49,6 +49,8 @@ public abstract class Subroutine extends Declaration {
 
         if (args.size() != parameters.size()) {
             log.error("argument.count.mismatch", args.size(), parameters.size());
+            System.err.println(log.getErrorCount());
+            return;
         }
 
         // Check each parameter against the corresponding argument.
