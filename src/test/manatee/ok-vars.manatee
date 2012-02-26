@@ -1,0 +1,6 @@
+my x is 3
+my y is 2
+while x > 0:
+    write y
+    set x to x - 1
+end

@@ -75,12 +75,15 @@ public class BinaryExpression extends Expression {
             }
             type = Type.TRUTH_VALUE;
 
-        // bool ANALSO bool
-        // bool ORELSE bool
+        // bool and bool
+        // bool or bool
         } else if (op.matches("and|or")) {
             left.assertBoolean(op, log);
             right.assertBoolean(op, log);
             type = Type.TRUTH_VALUE;
+
+        } else {
+            log.error("internal.error.bad.operator");
         }
     }
 }

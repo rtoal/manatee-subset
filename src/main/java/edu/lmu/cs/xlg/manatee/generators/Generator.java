@@ -60,7 +60,7 @@ public abstract class Generator {
             result = ++lastId;
             idMap.put(e, result);
         }
-        return "_v" + result;
+        return "v" + result;
     }
 
     /**

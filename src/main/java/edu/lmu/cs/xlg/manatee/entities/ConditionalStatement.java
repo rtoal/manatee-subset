@@ -7,18 +7,18 @@ import edu.lmu.cs.xlg.util.Log;
 public class ConditionalStatement extends Statement {
 
     public static class Arm extends Entity {
-        Expression guard;
+        Expression condition;
         Block block;
 
-        public Arm(Expression guard, Block block) {
-            this.guard = guard;
+        public Arm(Expression condition, Block block) {
+            this.condition = condition;
             this.block = block;
         }
 
         @Override
         public void analyze(Log log, SymbolTable table, Subroutine owner, boolean inLoop) {
-            guard.analyze(log, table, owner, inLoop);
-            guard.assertBoolean("condition", log);
+            condition.analyze(log, table, owner, inLoop);
+            condition.assertBoolean("condition", log);
             block.analyze(log, table, owner, inLoop);
         }
     }

@@ -16,7 +16,7 @@ import edu.lmu.cs.xlg.util.Log;
  *
  * <p>This class contains a static <code>main</code> method allowing you to run the compiler
  * from the command line, as well as a few methods to compile, or even run specific phases of
- * the compiler, programmatically.</p>
+ * the compiler, from any other application..</p>
  */
 public class Compiler {
 
@@ -36,7 +36,7 @@ public class Compiler {
      * where:
      * <pre>
      *     -x   generates and prints the syntax tree only (the default)
-     *     -m   generates and dumps the semantic graph only
+     *     -m   generates and prints the semantic graph only
      *     -js  translates to JavaScript
      * </pre>
      *
@@ -137,7 +137,7 @@ public class Compiler {
     public void translate(Reader reader, PrintWriter writer) throws IOException {
         Script script = checkSemantics(reader);
         if (log.getErrorCount() == 0) {
-            // TODO --> script.optimize();
+            script.optimize();
             Generator.getGenerator("js").generate(script, writer);
         }
     }

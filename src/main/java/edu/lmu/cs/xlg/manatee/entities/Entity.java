@@ -18,47 +18,51 @@ import edu.lmu.cs.xlg.util.Log;
  * <code>analyze</code> method.  Entities also have an <code>optimize</code> method for
  * simple local improvements.</p>
  *
- * <p>The entities are naturally grouped into a hierarchy of classes:</p>
+ * <p>The entities are naturally grouped into a hierarchy of classes.  Properties set
+ * during semantic analysis are marked with an asterisk:</p>
  *
  * <pre>
  * Entity
- *     Block (statements)
+ *     Block (statements, table*)
  *         Script
- *     Declaration (name)
- *         Variable (typeName, initializer, constant)
- *         Procedure (parameters, body)
- *         Function (returnTypeName, parameters, body)
  *     Type
  *         ArrayType (baseType*)
  *     Statement
+ *         Declaration (name)
+ *             Variable (typeName, initializer, constant, type*)
+ *             Subroutine (parameters, body)
+ *                 Procedure
+ *                 Function (returnTypeName, returnType*)
  *         DoNothingStatement
  *         AssignmentStatement (target, source)
  *         ReadStatement (expression)
  *         WriteStatement (expression)
  *         ExitStatement
  *         ReturnStatement (expression)
- *         ModifiedStatement (modifier, condition)
- *         WhileStatement (condition, body)
- *         CallStatement (procedureName, args)
+ *         CallStatement (procedureName, args, procedure*)
+ *         ModifiedStatement (modifier, statement)
  *         ConditionalStatement (arms, elsePart)
  *         PlainLoop (body)
  *         TimesLoop (count, body)
  *         CollectionLoop (iteratorName, collection, body)
  *         RangeLoop (iteratorName, low, high, step, body)
- *     Expression
+ *         WhileLoop (condition, body)
+ *     Expression (type*)
  *         Literal (lexeme)
  *             BooleanLiteral
  *             CharacterLiteral
- *             NumberLiteral
- *             WholeNumberLiteral
+ *             NumberLiteral (value*)
+ *             WholeNumberLiteral (value*)
  *             StringLiteral
  *             NullLiteral
- *         VariableReference (name)
- *         UnaryExpression (operator, operand)
- *         BinaryExpression (operator, left, right)
+ *         IdentifierExpression (name, referent*)
+ *         UnaryExpression (op, operand)
+ *         BinaryExpression (op, left, right)
  *         ArrayConstructor (expressions)
- *         SubscriptExpression (base, subscript)
+ *         SubscriptExpression (collection, index)
  *         FunctionCall (function, args)
+ *     ModifiedStatement.Modifier (modifierType, condition)
+ *     ConditionalStatement.Arm (condition, block)
  * </pre>
  */
 public abstract class Entity {

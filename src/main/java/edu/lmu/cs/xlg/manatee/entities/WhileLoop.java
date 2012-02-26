@@ -25,8 +25,8 @@ public class WhileLoop extends Statement {
 
     @Override
     public void analyze(Log log, SymbolTable table, Subroutine owner, boolean inLoop) {
-        condition.assertBoolean("while loop", log);
         condition.analyze(log, table, owner, inLoop);
+        condition.assertBoolean("while loop", log);
         body.analyze(log, table, owner, true);
     }
 }
