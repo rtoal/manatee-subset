@@ -15,6 +15,14 @@ public class ModifiedStatement extends Statement {
             this.condition = condition;
         }
 
+        public ModifierType getType() {
+            return type;
+        }
+
+        public Expression getCondition() {
+            return condition;
+        }
+
         @Override
         public void analyze(Log log, SymbolTable table, Subroutine owner, boolean inLoop) {
             condition.analyze(log, table, owner, inLoop);

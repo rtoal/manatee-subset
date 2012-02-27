@@ -28,7 +28,7 @@ public class AssignmentStatement extends Statement {
         target.analyze(log, table, owner, inLoop);
         source.analyze(log, table, owner, inLoop);
         if (!target.isWritableLValue()) {
-            log.error("non.writable.in.read.statement");
+            log.error("non.writable.in.assignment.statement");
         }
     }
 }

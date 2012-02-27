@@ -2,6 +2,9 @@ package edu.lmu.cs.xlg.manatee.entities;
 
 import edu.lmu.cs.xlg.util.Log;
 
+/**
+ * A Manatee type object.
+ */
 public class Type extends Declaration {
 
     public static final Type WHOLE_NUMBER = new Type("whole number");
@@ -43,7 +46,7 @@ public class Type extends Declaration {
     /**
      * Constructs a type with the given name.
      */
-    Type(String name) {
+    public Type(String name) {
         super(name);
     }
 
@@ -82,10 +85,15 @@ public class Type extends Declaration {
     }
 
     /**
-     * A default implementation that does nothing, since many type subclasses need no analysis.
+     * A default implementation that does nothing, since most type subclasses need no analysis.
      */
     @Override
     public void analyze(Log log, SymbolTable table, Subroutine owner, boolean inLoop) {
         // Intentionally empty.
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

@@ -278,7 +278,7 @@ Function FUNDEC(): {
     Block body;
 
 }{
-    "to" "get" ("a" | "an" | "some" | "the")
+    "to" "get" ("a" | "an" | "some" | "the")?
     type = TYPE()
     name = <ID>
     ("of" PARAMS(params))?
@@ -666,7 +666,7 @@ String RELOP(): {
     |
     ">=" {return ">=";}
     |
-    ">" {return ">=";}
+    ">" {return ">";}
     |
     LOOKAHEAD(2) "is" "not" {return "is not";}
     |

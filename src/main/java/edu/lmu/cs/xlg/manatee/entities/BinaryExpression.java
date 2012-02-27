@@ -2,6 +2,9 @@ package edu.lmu.cs.xlg.manatee.entities;
 
 import edu.lmu.cs.xlg.util.Log;
 
+/**
+ * An expression made up of an operator and two operands.
+ */
 public class BinaryExpression extends Expression {
 
     private String op;
@@ -9,7 +12,7 @@ public class BinaryExpression extends Expression {
     private Expression right;
 
     /**
-     * Creates a binary expression for a given operator and operands.
+     * Creates a binary expression for the given operator and operands.
      */
     public BinaryExpression(Expression left, String op, Expression right) {
         this.left = left;
@@ -70,8 +73,9 @@ public class BinaryExpression extends Expression {
 
         // equals or not equals on primitives
         } else if (op.matches("=|≠")) {
-            if (!(left.type.isPrimitive() && (left.isCompatibleWith(right.type) || right.isCompatibleWith(left.type)))) {
-                log.error("eq.type.error", op, left.type.getName(), right.type.getName());
+            if (!(left.type.isPrimitive() &&
+                    (left.isCompatibleWith(right.type) || right.isCompatibleWith(left.type)))) {
+                log.error("eq.type.error", op, left.type, right.type);
             }
             type = Type.TRUTH_VALUE;
 
@@ -83,7 +87,7 @@ public class BinaryExpression extends Expression {
             type = Type.TRUTH_VALUE;
 
         } else {
-            log.error("internal.error.bad.operator");
+            throw new RuntimeException("Internal error in binary expression analysis");
         }
     }
 }

@@ -1,0 +1,23 @@
+-- This file is intended to include all legal Manatee constructs,
+-- that is, to be the ultimate positive unit test.
+
+-- It is not there yet.
+
+my cat is 0
+my bat is '$'
+--my dog is '\(263a)'
+
+to sort number list x:
+  do nothing
+end
+
+to get the number max of number x, number y, and number z:
+    my t is x
+    set t to y if y > t
+    set t to z if z > t
+    return t
+end
+
+my array is [5.1, 17.1*cat, 22.1, 6.1]
+do sort(array)
+do sort([9.6])

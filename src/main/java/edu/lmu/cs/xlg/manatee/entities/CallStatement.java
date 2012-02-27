@@ -23,6 +23,10 @@ public class CallStatement extends Statement {
         return args;
     }
 
+    public Procedure getProcedure() {
+        return procedure;
+    }
+
     @Override
     public void analyze(Log log, SymbolTable table, Subroutine owner, boolean inLoop) {
 

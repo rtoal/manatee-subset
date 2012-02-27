@@ -49,8 +49,7 @@ public class UnaryExpression extends Expression {
             type = Type.WHOLE_NUMBER;
 
         } else {
-            log.error("compiler.bug");
-            type = Type.ARBITRARY;
+            throw new RuntimeException("Internal error in unary expression analysis");
         }
     }
 }
