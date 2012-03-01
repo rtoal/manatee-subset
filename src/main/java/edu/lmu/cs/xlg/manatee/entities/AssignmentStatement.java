@@ -30,5 +30,6 @@ public class AssignmentStatement extends Statement {
         if (!target.isWritableLValue()) {
             log.error("non.writable.in.assignment.statement");
         }
+        source.assertAssignableTo(target.getType(), log, "assignment.type.mismatch");
     }
 }
