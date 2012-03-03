@@ -35,11 +35,6 @@ public class Type extends Declaration {
      */
     public static final Type ARBITRARY_ARRAY = new Type("<arbitrary array>");
 
-    /**
-     * The type of an array containing only references.
-     */
-    public static final Type ARBITRARY_ARRAY_OF_REFERENCES = new Type("<arbitrary_array_of_references>");
-
     // The type of arrays of this type.  Created only if needed.
     private ArrayType arrayOfThisType = null;
 
@@ -82,6 +77,22 @@ public class Type extends Declaration {
             arrayOfThisType = new ArrayType(this);
         }
         return arrayOfThisType;
+    }
+
+    /**
+     * Returns whether an expression of this type can be assigned to an expression of another
+     * type.
+     */
+    public boolean canBeAssignedTo(Type that) {
+        return this == that
+        || this == WHOLE_NUMBER && that == NUMBER
+        || this == NULL_TYPE && that.isReference()
+        || this == ARBITRARY_ARRAY && that instanceof ArrayType
+        || this == ARBITRARY
+        || that == ARBITRARY
+        || this instanceof ArrayType && that instanceof ArrayType &&
+                ArrayType.class.cast(this).getBaseType().canBeAssignedTo(
+                        ArrayType.class.cast(that).getBaseType());
     }
 
     /**

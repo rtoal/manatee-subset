@@ -41,8 +41,8 @@ public class UnaryExpression extends Expression {
             type = Type.TRUTH_VALUE;
 
         } else if ("-".equals(op)) {
-            operand.assertInteger(op, log);
-            type = Type.WHOLE_NUMBER;
+            operand.assertArithmetic(op, log);
+            type = operand.getType();
 
         } else if ("length".equals(op)) {
             operand.assertArrayOrString(op, log);

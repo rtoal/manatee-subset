@@ -16,6 +16,10 @@ my a09 is "a long string"
 
 my a10 is a truth value list list list list list list list
 
+read a01
+read a02
+read a09
+
 my cat is 0
 my bat is '$'
 --my dog is '\(263a)'
@@ -58,6 +62,11 @@ if less(9, 8):
 else if less(10, 11):
   do nothing
 else if 3 = 3:
+  do nothing
+end
+
+while 4 < 5 and [1,2,3][2] >= length of [1,2,3] or a02 or a10[0][0][0][0][0][0][0]:
+  set a03 to "abcdefghij"[8]
   do nothing
 end
 

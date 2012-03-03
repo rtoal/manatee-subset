@@ -21,12 +21,8 @@ public abstract class Expression extends Entity {
      * Returns whether this expression is compatible with (that is, "can be assigned to an object
      * of") a given type.
      */
-    public boolean isCompatibleWith(Type testType) {
-        return this.type == testType
-            || this.type == Type.WHOLE_NUMBER && testType == Type.NUMBER
-            || this.type == Type.NULL_TYPE && testType.isReference()
-            || this.type == Type.ARBITRARY
-            || testType == Type.ARBITRARY;
+    public boolean isCompatibleWith(Type thatType) {
+        return type.canBeAssignedTo(thatType);
     }
 
     /**
