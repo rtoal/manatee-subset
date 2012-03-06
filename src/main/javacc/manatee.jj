@@ -54,7 +54,7 @@ TOKEN: {
     | ":" | "," | "+" | "-" | "*" | "/" | "<<" | ">>"
     | "<" | "<=" | "=" | "≠" | ">=" | ">" | "(" | ")" | "[" | "]"
 |
-    < BR: "\n" | "\r" >
+    < BR: "\n" | "\r" | "\r\n" >
 |
     < INTLIT: (["0"-"9"])+ >
 |
@@ -182,7 +182,7 @@ Statement STMT(): {
         s = SIMPLESTMT() (m = MODIFIER())?
         {if (m != null) s = new ModifiedStatement(m, s);}
     )
-    (<BR>)+
+    ((<BR>)+ | <EOF>)
     {return s;}
 }
 
