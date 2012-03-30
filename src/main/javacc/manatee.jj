@@ -355,7 +355,7 @@ Statement SIMPLESTMT(): {
         LOOKAHEAD(2) "do" "nothing"
         {return new DoNothingStatement();}
     |
-        "do" t = <ID> args = EXPLIST()
+        "do" t = <ID> (args = EXPLIST())?
         {return new CallStatement(t.image, args);}
     )
 }
