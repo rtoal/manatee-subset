@@ -3,6 +3,16 @@
 
 -- It is not there yet.
 
+write -0.4
+write 2.54x10^5
+write 10.00004x10^172
+
+to get whole number zero:
+    return 0
+end
+
+write (zero())
+
 my a01 is a whole number
 my a02 is a truth value
 my a03 is a character

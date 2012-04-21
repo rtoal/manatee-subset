@@ -4,7 +4,10 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import edu.lmu.cs.xlg.manatee.entities.Entity;
+import edu.lmu.cs.xlg.manatee.entities.Declaration;
 import edu.lmu.cs.xlg.manatee.entities.Script;
 
 /**
@@ -41,7 +44,7 @@ public abstract class Generator {
     }
 
     /**
-     * Generates a target script for the given Iki script.
+     * Generates a target script for the given Manatee script.
      *
      * @param script
      *     The Manatee program (source).
@@ -55,12 +58,16 @@ public abstract class Generator {
      * have one.
      */
     synchronized String id(Entity e) {
-        Integer result = idMap.get(e);
-        if (result == null) {
-            result = ++lastId;
-            idMap.put(e, result);
+        Integer suffix = idMap.get(e);
+        if (suffix == null) {
+            suffix = ++lastId;
+            idMap.put(e, suffix);
         }
-        return "v" + result;
+        String name = e instanceof Declaration ? Declaration.class.cast(e).getName() : "";
+        if (StringUtils.isBlank(name)) {
+            name = "$";
+        }
+        return name + "_" + suffix;
     }
 
     /**

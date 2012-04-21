@@ -41,6 +41,7 @@ import edu.lmu.cs.xlg.manatee.entities.Variable;
 import edu.lmu.cs.xlg.manatee.entities.WhileLoop;
 import edu.lmu.cs.xlg.manatee.entities.WholeNumberLiteral;
 import edu.lmu.cs.xlg.manatee.entities.WriteStatement;
+import edu.lmu.cs.xlg.manatee.entities.ConditionalStatement.Arm;
 
 /**
  * A generator that translates an Manatee program into JavaScript.
@@ -123,8 +124,7 @@ public class ManateeToJavaScriptGenerator extends Generator {
             emit("}");
 
         } else if (s instanceof ConditionalStatement) {
-            // TODO
-            emit("// CONDITIONAL STATEMENTS NOT YET HANDLED");
+            generateConditionalStatement(ConditionalStatement.class.cast(s));
 
         } else if (s instanceof PlainLoop) {
             emit("while (true) {");
@@ -153,6 +153,27 @@ public class ManateeToJavaScriptGenerator extends Generator {
             generateBlock(w.getBody());
             emit("}");
         }
+    }
+
+    /**
+     * Generates JavaScript code for conditional statement s.
+     */
+    private void generateConditionalStatement(ConditionalStatement s) {
+        if (s.getArms() == null || s.getArms().isEmpty()) {
+            throw new RuntimeException("INTERNAL ERROR: ANALYZER IS HORKED, MADE EMPTY CONDITIONAL");
+        }
+        boolean firstArm = true;
+        for (Arm arm: s.getArms()) {
+            String lead = firstArm ? "if" : "} else if";
+            emit(lead + " (" + generateExpression(arm.getCondition()) + ") {");
+            generateBlock(arm.getBlock());
+            firstArm = false;
+        }
+        if (s.getElsePart() != null) {
+            emit("} else {");
+            generateBlock(s.getElsePart());
+        }
+        emit("}");
     }
 
     /**
@@ -235,7 +256,7 @@ public class ManateeToJavaScriptGenerator extends Generator {
             return "TODO_CHAR_LITERAL";
 
         } else if (e instanceof StringLiteral) {
-            return "TODO_STRING_LITERAL";
+            return e.getLexeme();
 
         } else if (e instanceof NumberLiteral) {
             return NumberLiteral.class.cast(e).getValue() + "";
