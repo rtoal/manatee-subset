@@ -10,7 +10,7 @@ import edu.lmu.cs.xlg.util.Log;
 /**
  * A trivial symbol table for a block-structured language.
  */
-public class SymbolTable {
+public class SymbolTable extends Entity {
 
     // The actual contents of the symbol table.  Names map to entities.
     Map<String, Entity> map = new HashMap<String, Entity>();
@@ -134,5 +134,10 @@ public class SymbolTable {
             }
         }
         return result;
+    }
+
+    @Override
+    public void analyze(Log log, SymbolTable table, Subroutine owner, boolean inLoop) {
+        // Intentionally empty
     }
 }

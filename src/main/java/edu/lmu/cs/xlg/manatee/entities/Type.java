@@ -102,9 +102,4 @@ public class Type extends Declaration {
     public void analyze(Log log, SymbolTable table, Subroutine owner, boolean inLoop) {
         // Intentionally empty.
     }
-
-    @Override
-    public String toString() {
-        return getName();
-    }
 }

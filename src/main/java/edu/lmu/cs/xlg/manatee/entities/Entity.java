@@ -3,6 +3,8 @@ package edu.lmu.cs.xlg.manatee.entities;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -66,6 +68,37 @@ import edu.lmu.cs.xlg.util.Log;
  * </pre>
  */
 public abstract class Entity {
+
+    /**
+     * Collection of all entities that have ever been created, as a map with the entities as keys
+     * and their ids as values.
+     */
+    private static Map<Entity, Integer> all = new LinkedHashMap<Entity, Integer>();
+
+    /**
+     * Creates an entity, "assigning" it a new unique id by placing it in a global map mapping the
+     * entity to its id.
+     */
+    public Entity() {
+        synchronized (all) {
+            all.put(this, all.size());
+        }
+    }
+
+    /**
+     * Returns the integer id of this entity.
+     */
+    public Integer getId() {
+        return all.get(this);
+    }
+
+    /**
+     * Returns a short string containing this entity's id.
+     */
+    @Override
+    public String toString() {
+        return "#" + getId();
+    }
 
     /**
      * Writes a simple, indented, syntax tree rooted at the given entity to the given print
@@ -142,8 +175,39 @@ public abstract class Entity {
         void onExit(Entity e);
     }
 
-    public final void printEntities(PrintWriter writer) {
-        writer.println("Semantic dump not implemented");
+    /**
+     * Writes a concise line with the entity's id number, class, and non-null properties.  For any
+     * property that is itself an entity, or a collection of entities, only the entity id is
+     * written.
+     */
+    private void writeDetailLine(PrintWriter writer) {
+        String classname = getClass().getName();
+        String kind = classname.substring(classname.lastIndexOf('.') + 1);
+        writer.print(this + "\t(" + kind + ")");
+
+        for (Map.Entry<String, Object> entry: attributes().entrySet()) {
+            String name = entry.getKey();
+            Object value = entry.getValue();
+            if (value == null) {
+                continue;
+            }
+            if (value.getClass().isArray()) {
+                value = Arrays.asList((Object[]) value);
+            }
+            writer.print(" " + name + "=" + value);
+        }
+        writer.println();
+    }
+
+    public final void printEntities(final PrintWriter writer) {
+        traverse(new Visitor() {
+            public void onEntry(Entity e) {
+                e.writeDetailLine(writer);
+            }
+            public void onExit(Entity e) {
+                // Intentionally empty
+            }
+        }, new HashSet<Entity>());
     }
 
     /**
