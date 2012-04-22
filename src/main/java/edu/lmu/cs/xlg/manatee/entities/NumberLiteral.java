@@ -32,9 +32,7 @@ public class NumberLiteral extends Literal {
         String lexeme = getLexeme();
         try {
             if (lexeme.contains("^")) {
-                System.out.println("Before: " + lexeme + "of len " + lexeme.length());
                 lexeme = lexeme.replaceAll("(x|\\xd7)10\\^", "E");
-                System.out.println("After: " + lexeme);
             }
             value = Double.valueOf(lexeme);
         } catch (NumberFormatException e) {

@@ -135,17 +135,32 @@ public class ManateeToJavaScriptGenerator extends Generator {
             TimesLoop t = TimesLoop.class.cast(s);
             Variable v = new Variable("", Type.WHOLE_NUMBER);
             String count = generateExpression(t.getCount());
-            emit(String.format("for (var %s = %s; %s > 0; %s--) {", id(v), count, id(v), id(v)));
+            emit(String.format("for (var %s = %s; %s > 0; %s--) {",
+                    id(v), count, id(v), id(v)));
             generateBlock(t.getBody());
             emit("}");
 
         } else if (s instanceof CollectionLoop) {
-            // TODO
-            emit("// COLLECTION LOOPS NOT YET HANDLED");
+            CollectionLoop c = CollectionLoop.class.cast(s);
+            String index = id(c.getIterator());
+            String collection = generateExpression(c.getCollection());
+            emit(String.format("%s%s.forEach(function (%s) {",
+                    collection,
+                    c.getCollection().getType() == Type.STRING ? ".split('')" : "",
+                    index));
+            generateBlock(c.getBody());
+            emit("});");
 
         } else if (s instanceof RangeLoop) {
-            // TODO
-            emit("// RANGE LOOPS NOT YET HANDLED");
+            RangeLoop r = RangeLoop.class.cast(s);
+            String index = id(r.getIterator());
+            String low = generateExpression(r.getLow());
+            String high = generateExpression(r.getHigh());
+            String step = r.getStep() == null ? "1" : generateExpression(r.getStep());
+            emit(String.format("for (var %s = %s; %s <= %s; %s += %s) {",
+                    index, low, index, high, index, step));
+            generateBlock(r.getBody());
+            emit("}");
 
         } else if (s instanceof WhileLoop) {
             WhileLoop w = WhileLoop.class.cast(s);

@@ -8,6 +8,7 @@ import edu.lmu.cs.xlg.util.Log;
 public class RangeLoop extends Statement {
 
     private String iteratorName;
+    private Variable iterator;
     private Expression low;
     private Expression high;
     private Expression step;
@@ -24,6 +25,10 @@ public class RangeLoop extends Statement {
 
     public String getIteratorName() {
         return iteratorName;
+    }
+
+    public Variable getIterator() {
+        return iterator;
     }
 
     public Expression getLow() {
@@ -55,7 +60,8 @@ public class RangeLoop extends Statement {
             step.assertInteger("range loop", log);
         }
         body.createTable(table);
-        body.getTable().insert(new Variable(iteratorName, Type.WHOLE_NUMBER), log);
+        iterator = new Variable(iteratorName, Type.WHOLE_NUMBER);
+        body.getTable().insert(iterator, log);
         body.analyze(log, table, owner, true);
     }
 }

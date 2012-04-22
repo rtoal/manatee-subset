@@ -8,6 +8,7 @@ import edu.lmu.cs.xlg.util.Log;
 public class CollectionLoop extends Statement {
 
     private String iteratorName;
+    private Variable iterator;
     private Expression collection;
     private Block body;
 
@@ -21,6 +22,10 @@ public class CollectionLoop extends Statement {
         return iteratorName;
     }
 
+    public Variable getIterator() {
+        return iterator;
+    }
+
     public Expression getCollection() {
         return collection;
     }
@@ -32,9 +37,14 @@ public class CollectionLoop extends Statement {
     @Override
     public void analyze(Log log, SymbolTable table, Subroutine owner, boolean inLoop) {
         collection.analyze(log, table, owner, inLoop);
-        collection.assertArray("loop", log);
+        collection.assertArrayOrString("loop", log);
         body.createTable(table);
-        body.getTable().insert(new Variable(iteratorName, collection.getType().array()), log);
+        Type iteratorType = collection.getType() instanceof ArrayType ?
+                ArrayType.class.cast(collection.getType()).getBaseType() :
+                collection.getType() == Type.STRING ? Type.CHARACTER :
+                Type.ARBITRARY;
+        iterator = new Variable(iteratorName, iteratorType);
+        body.getTable().insert(iterator, log);
         body.analyze(log, table, owner, true);
     }
 }
