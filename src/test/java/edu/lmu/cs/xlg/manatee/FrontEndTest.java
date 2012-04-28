@@ -60,11 +60,10 @@ public class FrontEndTest {
     @Test
     public void testFrontEnd() throws IOException {
         try {
-            System.out.print("Testing " + filename + "... ");
+            System.out.println("Testing " + filename + "... ");
             Reader reader = new FileReader(TEST_DIRECTORY + "/" + filename);
 
             Compiler compiler = new Compiler();
-            compiler.setQuiet(false);
 
             if (filename.startsWith("synerror")) {
                 // Expect at least one error during syntax checking
