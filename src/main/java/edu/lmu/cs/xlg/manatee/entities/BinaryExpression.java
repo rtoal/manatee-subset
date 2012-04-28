@@ -86,6 +86,16 @@ public class BinaryExpression extends Expression {
             right.assertBoolean(op, log);
             type = Type.TRUTH_VALUE;
 
+        // ref is ref
+        // ref is not ref
+        } else if (op.matches("is") || op.matches("is not")) {
+            if (!left.getType().isReference() && !right.getType().isReference()) {
+                log.error("non.reference", op);
+            }
+            if (left.getType() != right.getType()) {
+                log.error("type.mismatch", op);
+            }
+
         } else {
             throw new RuntimeException("Internal error in binary expression analysis");
         }

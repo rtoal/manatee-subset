@@ -23,3 +23,6 @@ set a03 to [[]]
 set a03 to [[1.4]]
 set a03 to [[1.4], [2.0,3.3,9.0]]
 
+write a01 is a01
+write a02 is not a02
+write a04 is [yes]
