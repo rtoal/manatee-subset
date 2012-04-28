@@ -95,6 +95,7 @@ public class BinaryExpression extends Expression {
             if (left.getType() != right.getType()) {
                 log.error("type.mismatch", op);
             }
+            type = Type.TRUTH_VALUE;
 
         } else {
             throw new RuntimeException("Internal error in binary expression analysis");
