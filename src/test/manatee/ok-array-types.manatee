@@ -34,6 +34,4 @@ write 4 in a01
 set test to 5 in a01
 set test to no in a04
 set test to [1.5, 9.0] in a03
-set test to [6] in a03
-
-
+set test to [6] in a03                  -- int list in real list (cool)

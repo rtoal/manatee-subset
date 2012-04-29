@@ -335,10 +335,12 @@ public class ManateeToJavaScriptGenerator extends Generator {
             op = "&&";
         } else if (op.equals("or")) {
             op = "||";
-        } else if (op.equals("=")) {
+        } else if (op.equals("=") || op.equals("is")) {
             op = "===";
-        } else if (op.equals("≠")) {
+        } else if (op.equals("≠") || op.equals("is not")) {
             op = "!==";
+        } else if (op.equals("in")) {
+            return String.format("(%s.indexOf(%s) >= 0)", right, left);
         } else if (op.matches("-|/|<<|>>|<|<=|>|>=")) {
             // Nothing here, just checking the operator is valid
         } else {
