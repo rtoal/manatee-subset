@@ -101,12 +101,12 @@ public class ManateeToJavaScriptGenerator extends Generator {
 
         } else if (s instanceof CallStatement) {
             CallStatement call = CallStatement.class.cast(s);
-            String p = id(call.getProcedure());
+            String procedure = id(call.getProcedure());
             List<String> arguments = new ArrayList<String>();
-            for (Expression a: call.getArgs()) {
-                arguments.add(generateExpression(a));
+            for (Expression argument: call.getArgs()) {
+                arguments.add(generateExpression(argument));
             }
-            emit(String.format("%s(%s)", p, StringUtils.join(arguments, ", ")));
+            emit(String.format("%s(%s)", procedure, StringUtils.join(arguments, ", ")));
 
         } else if (s instanceof ModifiedStatement) {
             ModifiedStatement m = ModifiedStatement.class.cast(s);
@@ -114,7 +114,7 @@ public class ManateeToJavaScriptGenerator extends Generator {
             switch (m.getModifier().getType()) {
             case IF: key = "if"; break;
             case WHILE: key = "while"; break;
-            default: throw new RuntimeException("Internal error translating modifers");
+            default: throw new RuntimeException("Internal error: unknown modifier");
             }
             String condition = generateExpression(m.getModifier().getCondition());
             emit(String.format("%s (%s) {", key, condition));
@@ -132,40 +132,40 @@ public class ManateeToJavaScriptGenerator extends Generator {
             emit("}");
 
         } else if (s instanceof TimesLoop) {
-            TimesLoop t = TimesLoop.class.cast(s);
-            Variable v = new Variable("", Type.WHOLE_NUMBER);
-            String count = generateExpression(t.getCount());
+            TimesLoop loop = TimesLoop.class.cast(s);
+            Variable counter = new Variable("", Type.WHOLE_NUMBER);
+            String count = generateExpression(loop.getCount());
             emit(String.format("for (var %s = %s; %s > 0; %s--) {",
-                    id(v), count, id(v), id(v)));
-            generateBlock(t.getBody());
+                    id(counter), count, id(counter), id(counter)));
+            generateBlock(loop.getBody());
             emit("}");
 
         } else if (s instanceof CollectionLoop) {
-            CollectionLoop c = CollectionLoop.class.cast(s);
-            String index = id(c.getIterator());
-            String collection = generateExpression(c.getCollection());
+            CollectionLoop loop = CollectionLoop.class.cast(s);
+            String index = id(loop.getIterator());
+            String collection = generateExpression(loop.getCollection());
             emit(String.format("%s%s.forEach(function (%s) {",
                     collection,
-                    c.getCollection().getType() == Type.STRING ? ".split('')" : "",
+                    loop.getCollection().getType() == Type.STRING ? ".split('')" : "",
                     index));
-            generateBlock(c.getBody());
+            generateBlock(loop.getBody());
             emit("});");
 
         } else if (s instanceof RangeLoop) {
-            RangeLoop r = RangeLoop.class.cast(s);
-            String index = id(r.getIterator());
-            String low = generateExpression(r.getLow());
-            String high = generateExpression(r.getHigh());
-            String step = r.getStep() == null ? "1" : generateExpression(r.getStep());
+            RangeLoop loop = RangeLoop.class.cast(s);
+            String index = id(loop.getIterator());
+            String low = generateExpression(loop.getLow());
+            String high = generateExpression(loop.getHigh());
+            String step = loop.getStep() == null ? "1" : generateExpression(loop.getStep());
             emit(String.format("for (var %s = %s; %s <= %s; %s += %s) {",
                     index, low, index, high, index, step));
-            generateBlock(r.getBody());
+            generateBlock(loop.getBody());
             emit("}");
 
         } else if (s instanceof WhileLoop) {
-            WhileLoop w = WhileLoop.class.cast(s);
-            emit("while (" + generateExpression(w.getCondition()) + ") {");
-            generateBlock(w.getBody());
+            WhileLoop loop = WhileLoop.class.cast(s);
+            emit("while (" + generateExpression(loop.getCondition()) + ") {");
+            generateBlock(loop.getBody());
             emit("}");
         }
     }
@@ -174,9 +174,7 @@ public class ManateeToJavaScriptGenerator extends Generator {
      * Generates JavaScript code for conditional statement s.
      */
     private void generateConditionalStatement(ConditionalStatement s) {
-        if (s.getArms() == null || s.getArms().isEmpty()) {
-            throw new RuntimeException("INTERNAL ERROR: ANALYZER IS HORKED, MADE EMPTY CONDITIONAL");
-        }
+
         boolean firstArm = true;
         for (Arm arm: s.getArms()) {
             String lead = firstArm ? "if" : "} else if";
@@ -268,9 +266,11 @@ public class ManateeToJavaScriptGenerator extends Generator {
             return "true";
 
         } else if (e instanceof CharacterLiteral) {
-            return "TODO_CHAR_LITERAL";
+            // Note: Unicode escapes are not part of the subset language.
+            return e.getLexeme();
 
         } else if (e instanceof StringLiteral) {
+            // Note: Unicode escapes are not part of the subset language.
             return e.getLexeme();
 
         } else if (e instanceof NumberLiteral) {
@@ -283,7 +283,7 @@ public class ManateeToJavaScriptGenerator extends Generator {
             return "null";
 
         } else {
-            throw new RuntimeException("Internal Operator in expression translation");
+            throw new RuntimeException("Internal Error: unknown literal type");
         }
     }
 
@@ -300,7 +300,7 @@ public class ManateeToJavaScriptGenerator extends Generator {
         } else if ("length".equals(e.getOp())) {
             return "((" + operand + ").length)";
         } else {
-            throw new RuntimeException("InternalError in unary expression translation");
+            throw new RuntimeException("Internal Error: unknown unary operator");
         }
     }
 
@@ -329,7 +329,17 @@ public class ManateeToJavaScriptGenerator extends Generator {
             }
         } else if (op.equals("*")) {
             if (e.getLeft().getType() == Type.STRING) {
-                return "TODO_STRING_TIMES";
+                Variable counter = new Variable("", Type.WHOLE_NUMBER);
+                Variable result = new Variable("", Type.STRING);
+                String value = generateExpression(e.getLeft());
+                String count = generateExpression(e.getRight());
+                emit(String.format("for (var %s = \"\", %s = %s; %s > 0; %s--) {",
+                        id(result), id(counter), count, id(counter), id(counter)));
+                indentLevel++;
+                emit(String.format("%s = %s.concat(%s);", id(result), id(result), value));
+                indentLevel--;
+                emit("}");
+                return id(result);
             }
         } else if (op.equals("and")) {
             op = "&&";
@@ -344,7 +354,7 @@ public class ManateeToJavaScriptGenerator extends Generator {
         } else if (op.matches("-|/|<<|>>|<|<=|>|>=")) {
             // Nothing here, just checking the operator is valid
         } else {
-            throw new RuntimeException("InternalError in binary expression translation");
+            throw new RuntimeException("Internal Error: unknown binary operator");
         }
         return String.format("(%s %s %s)", left, op, right);
     }

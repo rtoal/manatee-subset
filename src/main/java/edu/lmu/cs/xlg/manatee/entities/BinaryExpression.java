@@ -46,8 +46,13 @@ public class BinaryExpression extends Expression {
         left.analyze(log, table, owner, inLoop);
         right.analyze(log, table, owner, inLoop);
 
+        // string * int
+        if (op.equals("*") && left.getType() == Type.STRING) {
+            right.assertInteger("*", log);
+            type = Type.STRING;
+
         // num op num (for arithmetic op)
-        if (op.matches("[-+*/]")) {
+        } else if (op.matches("[-+*/]")) {
             left.assertArithmetic(op, log);
             right.assertArithmetic(op, log);
             type = (left.type == Type.NUMBER || right.type == Type.NUMBER)
